@@ -1,22 +1,27 @@
 package pe.edu.upc.restaurants
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
-import pe.edu.upc.restaurants.data.entities.Restaurant
+import pe.edu.upc.restaurants.data.models.Restaurant
 import pe.edu.upc.restaurants.data.remote.ApiClient
 import pe.edu.upc.restaurants.ui.theme.RestaurantsTheme
 import retrofit2.Call
@@ -31,10 +36,7 @@ class MainActivity : ComponentActivity() {
         loadRestaurants()
         setContent {
             RestaurantsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    RestaurantList(restaurants)
-                }
+                MyApp(restaurants)
             }
         }
     }
@@ -52,11 +54,17 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onFailure(call: Call<List<Restaurant>>, t: Throwable) {
-
+                Log.d("MainActivity", t.toString())
             }
 
-        }
-        )
+        })
+    }
+}
+
+@Composable
+fun MyApp(restaurants: List<Restaurant>) {
+    Scaffold {
+        RestaurantList(restaurants)
     }
 }
 
@@ -71,26 +79,44 @@ fun RestaurantList(restaurants: List<Restaurant>) {
 
 @Composable
 fun RestaurantRow(restaurant: Restaurant) {
-    Row {
-        Image(
-            painter = rememberImagePainter(
-                data = restaurant.poster
-            ),
-            contentDescription = "Restaurant photo",
-            modifier = Modifier.size(48.dp)
-        )
-        Spacer(Modifier.width(8.dp))
-        Column {
-            Text(text = restaurant.name, fontWeight = FontWeight.Bold)
-            Text(text = restaurant.district)
+    Card(
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxWidth(),
+        elevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+        ) {
+            RestaurantImage(
+                restaurant = restaurant
+            )
+            Spacer(Modifier.width(8.dp))
+            Column(modifier = Modifier.align(alignment = Alignment.CenterVertically)) {
+                Text(
+                    text = restaurant.name,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = restaurant.district,
+                    style = typography.caption
+                )
+            }
         }
-
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    RestaurantsTheme {
-    }
+fun RestaurantImage(restaurant: Restaurant) {
+    Image(
+        painter = rememberImagePainter(
+            data = restaurant.poster,
+        ),
+        contentDescription = "Restaurant photo",
+        modifier = Modifier
+            .size(64.dp)
+            .clip(shape = RoundedCornerShape(4.dp)),
+        contentScale = ContentScale.Crop
+    )
 }

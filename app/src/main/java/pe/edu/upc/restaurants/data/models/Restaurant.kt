@@ -1,6 +1,4 @@
-package pe.edu.upc.restaurants.data.entities
-
-import com.google.gson.annotations.SerializedName
+package pe.edu.upc.restaurants.data.models
 
 class Restaurant(
     val id: Int,

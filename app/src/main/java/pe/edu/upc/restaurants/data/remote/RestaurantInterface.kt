@@ -1,6 +1,6 @@
 package pe.edu.upc.restaurants.data.remote
 
-import pe.edu.upc.restaurants.data.entities.Restaurant
+import pe.edu.upc.restaurants.data.models.Restaurant
 import retrofit2.Call
 import retrofit2.http.GET
 
